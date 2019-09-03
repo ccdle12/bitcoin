@@ -7,6 +7,7 @@
 
 #include <ios>
 #include <memory>
+#include <iostream>
 
 #include <event2/event.h>
 #include <event2/http.h>
@@ -28,6 +29,7 @@ MAKE_RAII(evhttp_request);
 MAKE_RAII(evhttp_connection);
 
 inline raii_event_base obtain_event_base() {
+    std::cout << "DEBUG CCDLE12 [events.h: 31] obtain_event_base" << std::endl;
     auto result = raii_event_base(event_base_new());
     if (!result.get())
         throw std::runtime_error("cannot create event_base");

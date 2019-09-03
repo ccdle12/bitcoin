@@ -306,6 +306,7 @@ static UniValue CallRPC(BaseRequestHandler *rh, const std::string& strMethod, co
     //     2. port in -rpcconnect (ie following : in ipv4 or ]: in ipv6)
     //     3. default port for chain
     int port = BaseParams().RPCPort();
+    std::cout << "DEBUG CCDLE12 [bitcoin-cli.cpp: 309]: CallRPC(): port: " << port << std::endl;
     SplitHostPort(gArgs.GetArg("-rpcconnect", DEFAULT_RPCCONNECT), port, host);
     port = gArgs.GetArg("-rpcport", port);
 
@@ -323,6 +324,7 @@ static UniValue CallRPC(BaseRequestHandler *rh, const std::string& strMethod, co
 #if LIBEVENT_VERSION_NUMBER >= 0x02010300
     evhttp_request_set_error_cb(req.get(), http_error_cb);
 #endif
+    std::cout << "DEBUG CCDLE12 [bitcoin-cli.cpp: 327]: CallRPC(): HTTPReply response: " << response.body << std::endl;
 
     // Get credentials
     std::string strRPCUserColonPass;
@@ -409,13 +411,15 @@ static int CommandLineRPC(int argc, char *argv[])
             argc--;
             argv++;
         }
+
         std::string rpcPass;
         if (gArgs.GetBoolArg("-stdinrpcpass", false)) {
             if (!std::getline(std::cin, rpcPass)) {
                 throw std::runtime_error("-stdinrpcpass specified but failed to read from standard input");
             }
             gArgs.ForceSetArg("-rpcpassword", rpcPass);
-        }
+        } 
+
         std::vector<std::string> args = std::vector<std::string>(&argv[1], &argv[argc]);
         if (gArgs.GetBoolArg("-stdin", false)) {
             // Read one arg per line from stdin and append
@@ -424,12 +428,15 @@ static int CommandLineRPC(int argc, char *argv[])
                 args.push_back(line);
             }
         }
+
         std::unique_ptr<BaseRequestHandler> rh;
         std::string method;
         if (gArgs.GetBoolArg("-getinfo", false)) {
+            std::cout << "DEBUG CCDLE12 [bitcoin-cli.cpp: 433]: reset GetinfoRequestHandler" << std::endl;
             rh.reset(new GetinfoRequestHandler());
             method = "";
         } else {
+            std::cout << "DEBUG CCDLE12 [bitcoin-cli.cpp: 437]: reset DefaultRequestHandler" << std::endl;
             rh.reset(new DefaultRequestHandler());
             if (args.size() < 1) {
                 throw std::runtime_error("too few parameters (need at least command)");
@@ -438,11 +445,14 @@ static int CommandLineRPC(int argc, char *argv[])
             args.erase(args.begin()); // Remove trailing method name from arguments vector
         }
 
+        std::cout << "DEBUG CCDLE12 [bitcoin-cli.cpp: 446]: After request handler if statement" << std::endl;
         // Execute and handle connection failures with -rpcwait
         const bool fWait = gArgs.GetBoolArg("-rpcwait", false);
         do {
+            std::cout << "DEBUG CCDLE12 [bitcoin-cli.cpp: 450]: do loop" << std::endl;
             try {
                 const UniValue reply = CallRPC(rh.get(), method, args);
+                std::cout << "DEBUG CCDLE12 [bitcoin-cli.cpp: 453]: CallRPC reply" << std::endl;
 
                 // Parse reply
                 const UniValue& result = find_value(reply, "result");
