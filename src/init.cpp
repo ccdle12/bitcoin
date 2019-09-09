@@ -156,6 +156,7 @@ static CScheduler scheduler;
 
 void Interrupt()
 {
+    LogPrintf("CCDLE12: INTERRUPT CALLED");
     InterruptHTTPServer();
     InterruptHTTPRPC();
     InterruptRPC();
@@ -172,6 +173,7 @@ void Interrupt()
 
 void Shutdown(InitInterfaces& interfaces)
 {
+    LogPrintf("CCDLE12: SHUTDOWN CALLED");
     LogPrintf("%s: In progress...\n", __func__);
     static CCriticalSection cs_Shutdown;
     TRY_LOCK(cs_Shutdown, lockShutdown);

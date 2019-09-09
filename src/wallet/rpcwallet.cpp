@@ -39,6 +39,8 @@
 
 #include <functional>
 
+#include <iostream>
+
 static const std::string WALLET_ENDPOINT_BASE = "/wallet/";
 
 static inline bool GetAvoidReuseFlag(CWallet * const pwallet, const UniValue& param) {
@@ -200,6 +202,8 @@ static UniValue getnewaddress(const JSONRPCRequest& request)
             + HelpExampleRpc("getnewaddress", "")
                 },
             }.Check(request);
+
+    std::cout << "CCDLE12 DEBUG: GETNEWADDRESS CALLED" << std::endl;
 
     LOCK(pwallet->cs_wallet);
 
@@ -2327,11 +2331,13 @@ static UniValue settxfee(const JSONRPCRequest& request)
 
 static UniValue getbalances(const JSONRPCRequest& request)
 {
+    std::cout << "CCDLE12 GETBALANCES CALLED" << std::endl;
     std::shared_ptr<CWallet> const rpc_wallet = GetWalletForJSONRPCRequest(request);
     if (!EnsureWalletIsAvailable(rpc_wallet.get(), request.fHelp)) {
         return NullUniValue;
     }
     CWallet& wallet = *rpc_wallet;
+    std::cout << "CCDLE12 GETBALANCES BEFORE RPCHELPMAN" << std::endl;
 
     RPCHelpMan{
         "getbalances",
@@ -2339,7 +2345,7 @@ static UniValue getbalances(const JSONRPCRequest& request)
         {},
         RPCResult{
             "{\n"
-            "    \"mine\": {                        (object) balances from outputs that the wallet can sign\n"
+            "    \"CCDEL12m CHANGED12313ine\": {                        (object) balances from outputs that the wallet can sign\n"
             "      \"trusted\": xxx                 (numeric) trusted balance (outputs created by the wallet or confirmed outputs)\n"
             "      \"untrusted_pending\": xxx       (numeric) untrusted pending balance (outputs created by others that are in the mempool)\n"
             "      \"immature\": xxx                (numeric) balance from immature coinbase outputs\n"
@@ -2369,7 +2375,7 @@ static UniValue getbalances(const JSONRPCRequest& request)
     UniValue balances{UniValue::VOBJ};
     {
         UniValue balances_mine{UniValue::VOBJ};
-        balances_mine.pushKV("trusted", ValueFromAmount(bal.m_mine_trusted));
+        balances_mine.pushKV("trusted hello", ValueFromAmount(bal.m_mine_trusted));
         balances_mine.pushKV("untrusted_pending", ValueFromAmount(bal.m_mine_untrusted_pending));
         balances_mine.pushKV("immature", ValueFromAmount(bal.m_mine_immature));
         if (wallet.IsWalletFlagSet(WALLET_FLAG_AVOID_REUSE)) {
@@ -2382,7 +2388,7 @@ static UniValue getbalances(const JSONRPCRequest& request)
     }
     if (wallet.HaveWatchOnly()) {
         UniValue balances_watchonly{UniValue::VOBJ};
-        balances_watchonly.pushKV("trusted", ValueFromAmount(bal.m_watchonly_trusted));
+        balances_watchonly.pushKV("trusted hello", ValueFromAmount(bal.m_watchonly_trusted));
         balances_watchonly.pushKV("untrusted_pending", ValueFromAmount(bal.m_watchonly_untrusted_pending));
         balances_watchonly.pushKV("immature", ValueFromAmount(bal.m_watchonly_immature));
         balances.pushKV("watchonly", balances_watchonly);
@@ -2769,6 +2775,8 @@ static UniValue unloadwallet(const JSONRPCRequest& request)
 static UniValue listunspent(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    // Dereferenced point to the wallet.
+    // pwallet = pointerwallet
     CWallet* const pwallet = wallet.get();
 
     if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {

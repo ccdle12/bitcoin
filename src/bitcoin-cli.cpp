@@ -289,6 +289,7 @@ public:
         } else {
             params = RPCConvertValues(method, args);
         }
+        std::cout << "DEBUG CCDLE12 [bitcoin-cli.cpp: 292] PrepareRequest: " << params.getValStr() << std::endl;
         return JSONRPCRequestObj(method, params, 1);
     }
 
@@ -435,6 +436,7 @@ static int CommandLineRPC(int argc, char *argv[])
                 throw std::runtime_error("too few parameters (need at least command)");
             }
             method = args[0];
+            std::cout << "DEBUG CCDLE12: method called: " << method << std::endl;
             args.erase(args.begin()); // Remove trailing method name from arguments vector
         }
 

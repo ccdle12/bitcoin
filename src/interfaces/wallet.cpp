@@ -30,6 +30,8 @@
 #include <utility>
 #include <vector>
 
+#include <iostream>
+
 namespace interfaces {
 namespace {
 
@@ -116,6 +118,7 @@ public:
     std::string getWalletName() override { return m_wallet->GetName(); }
     bool getNewDestination(const OutputType type, const std::string label, CTxDestination& dest) override
     {
+        std::cout << "DEBUG: CCDLE12 calling get new address in getNewDestination() wallet.cpp" << std::endl; 
         LOCK(m_wallet->cs_wallet);
         std::string error;
         return m_wallet->GetNewDestination(type, label, dest, error);

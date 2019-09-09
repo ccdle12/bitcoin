@@ -25,6 +25,8 @@
 
 #include <univalue.h>
 
+#include <logging.h>
+
 static UniValue getconnectioncount(const JSONRPCRequest& request)
 {
             RPCHelpMan{"getconnectioncount",
@@ -208,6 +210,8 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)
 
 static UniValue addnode(const JSONRPCRequest& request)
 {
+    std::cout << "Add node called" << std::endl;
+    LogPrintf("Add node called CCDLE12");
     std::string strCommand;
     if (!request.params[1].isNull())
         strCommand = request.params[1].get_str();
@@ -244,6 +248,7 @@ static UniValue addnode(const JSONRPCRequest& request)
 
     if (strCommand == "add")
     {
+        std::cout << "Why you no called?!?" << std::endl;
         if(!g_connman->AddNode(strNode))
             throw JSONRPCError(RPC_CLIENT_NODE_ALREADY_ADDED, "Error: Node already added");
     }

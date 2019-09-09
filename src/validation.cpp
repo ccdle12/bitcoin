@@ -53,6 +53,8 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/thread.hpp>
 
+#include <iostream>
+
 #if defined(NDEBUG)
 # error "Bitcoin cannot be compiled without assertions."
 #endif
@@ -1035,14 +1037,23 @@ bool ReadRawBlockFromDisk(std::vector<uint8_t>& block, const CBlockIndex* pindex
 
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
+    std::cout << "DEBUG(CCDLE12): GetBlockSubsidy Called" << std::endl;
+    std::cout << "DEBUG(CCDLE12): GetBlockSubsidy: nHeight: " << nHeight << std::endl;
+    std::cout << "DEBUG(CCDLE12): GetBlockSubsidy: SubsidyHalvingInterval: " << consensusParams.nSubsidyHalvingInterval << std::endl;
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
+    std::cout << "DEBUG(CCDLE12): GetBlockSubsidy: halvings: " << halvings << std::endl;
     // Force block reward to zero when right shift is undefined.
     if (halvings >= 64)
         return 0;
 
+    std::cout << "DEBUG(CCDLE12): COIN: " << COIN << std::endl;
+    // COIN is the 8 decimal place denomination.
+    // 50 is the initial block reward.
     CAmount nSubsidy = 50 * COIN;
+    std::cout << "DEBUG(CCDLE12): Initial nSubsidy: " << nSubsidy << std::endl;
     // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
     nSubsidy >>= halvings;
+    std::cout << "DEBUG(CCDLE12): nSubsidy >>= halvings: " << nSubsidy << std::endl;
     return nSubsidy;
 }
 
