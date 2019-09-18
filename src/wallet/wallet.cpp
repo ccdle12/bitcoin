@@ -1672,6 +1672,7 @@ void CWallet::SetHDChain(const CHDChain& chain, bool memonly)
 
 bool CWallet::IsHDEnabled() const
 {
+    std::cout << "CCDLE12 DEBUG: hd chain seed: " << hdChain.seed_id.ToString() << std::endl;
     return !hdChain.seed_id.IsNull();
 }
 
@@ -3550,6 +3551,8 @@ void CWallet::LoadKeyPool(int64_t nIndex, const CKeyPool &keypool)
 
 bool CWallet::TopUpKeyPool(unsigned int kpSize)
 {
+    std::cout << "CCDLE12 DEBUG: TopUpKeyPool called" << std::endl;
+    std::cout << "CCDLE12 DEBUG: kpSize: " << kpSize << std::endl;
     if (!CanGenerateKeys()) {
         return false;
     }
@@ -3613,6 +3616,7 @@ void CWallet::AddKeypoolPubkeyWithDB(const CPubKey& pubkey, const bool internal,
 bool CWallet::ReserveKeyFromKeyPool(int64_t& nIndex, CKeyPool& keypool, bool fRequestedInternal)
 {
     nIndex = -1;
+    std::cout << "DEBUG CCDLE12: Assigning a public key to vchPubkey for &keypool" << std::endl;
     keypool.vchPubKey = CPubKey();
     {
         LOCK(cs_wallet);
@@ -3684,6 +3688,7 @@ void CWallet::ReturnKey(int64_t nIndex, bool fInternal, const CPubKey& pubkey)
 
 bool CWallet::GetKeyFromPool(CPubKey& result, bool internal)
 {
+    std::cout << "GetKeyFromPool() called" << std::endl;
     if (!CanGetAddresses(internal)) {
         return false;
     }
@@ -3705,7 +3710,9 @@ bool CWallet::GetKeyFromPool(CPubKey& result, bool internal)
 }
 
 bool CWallet::GetNewDestination(const OutputType type, const std::string label, CTxDestination& dest, std::string& error)
+
 {
+    std::cout << "CCDLE12 DEBUG: GetNewDestination called" << std::endl;
     LOCK(cs_wallet);
     error.clear();
 
