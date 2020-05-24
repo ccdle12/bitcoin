@@ -869,6 +869,8 @@ static UniValue testmempoolaccept(const JSONRPCRequest& request)
                             {RPCResult::Type::STR_HEX, "txid", "The transaction hash in hex"},
                             {RPCResult::Type::BOOL, "allowed", "If the mempool allows this tx to be inserted"},
                             {RPCResult::Type::STR, "reject-reason", "Rejection string (only present when 'allowed' is false)"},
+			    // NOTES - CCDLE12: Add the fee
+                            {RPCResult::Type::STR, "fee", "Transaction pool fee"},
                         }},
                     }
                 },
@@ -893,10 +895,12 @@ static UniValue testmempoolaccept(const JSONRPCRequest& request)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Array must contain exactly one raw transaction for now");
     }
 
+    // NOTES: CCDLE12 - Deserializes the raw txs to CMutableTransaction.
     CMutableTransaction mtx;
     if (!DecodeHexTx(mtx, request.params[0].get_array()[0].get_str())) {
         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "TX decode failed");
     }
+    // NOTES: CCDLE12 - Creates a shared pointer of the CTransaction using, CTransactionRef
     CTransactionRef tx(MakeTransactionRef(std::move(mtx)));
     const uint256& tx_hash = tx->GetHash();
 
@@ -904,6 +908,7 @@ static UniValue testmempoolaccept(const JSONRPCRequest& request)
                                              DEFAULT_MAX_RAW_TX_FEE_RATE :
                                              CFeeRate(AmountFromValue(request.params[1]));
 
+    // NOTES: CCDLE12 - Calculates the fee using the virtual_size (CFeeRate)
     CTxMemPool& mempool = EnsureMemPool();
     int64_t virtual_size = GetVirtualTransactionSize(*tx);
     CAmount max_raw_tx_fee = max_raw_tx_fee_rate.GetFee(virtual_size);
@@ -931,6 +936,9 @@ static UniValue testmempoolaccept(const JSONRPCRequest& request)
             result_0.pushKV("reject-reason", state.GetRejectReason());
         }
     }
+
+    // NOTES - CCDLE12: Push the fee
+    result_0.pushKV("fee", max_raw_tx_fee);
 
     result.push_back(std::move(result_0));
     return result;
