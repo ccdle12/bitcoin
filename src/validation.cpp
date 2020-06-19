@@ -1228,6 +1228,7 @@ bool ReadRawBlockFromDisk(std::vector<uint8_t>& block, const CBlockIndex* pindex
     return ReadRawBlockFromDisk(block, block_pos, message_start);
 }
 
+// CCDLE12: This is where the block reward is calculated
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
