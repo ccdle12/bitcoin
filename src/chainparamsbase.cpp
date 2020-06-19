@@ -14,7 +14,7 @@
 const std::string CBaseChainParams::MAIN = "main";
 const std::string CBaseChainParams::TESTNET = "test";
 const std::string CBaseChainParams::REGTEST = "regtest";
-const std::String CBaseChainParams::PRIVNET = "privnet";
+const std::string CBaseChainParams::PRIVNET = "privnet";
 
 void SetupChainParamsBaseOptions(ArgsManager& argsman)
 {
