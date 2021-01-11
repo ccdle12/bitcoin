@@ -620,11 +620,14 @@ static RPCHelpMan setban()
         [&](const RPCHelpMan& help, const JSONRPCRequest& request) -> UniValue
 {
     std::string strCommand;
+
     if (!request.params[1].isNull())
         strCommand = request.params[1].get_str();
+
     if (strCommand != "add" && strCommand != "remove") {
         throw std::runtime_error(help.ToString());
     }
+
     NodeContext& node = EnsureNodeContext(request.context);
     if (!node.banman) {
         throw JSONRPCError(RPC_DATABASE_ERROR, "Error: Ban database not loaded");
@@ -634,9 +637,16 @@ static RPCHelpMan setban()
     CNetAddr netAddr;
     bool isSubnet = false;
 
+    // CCDLE12: Check that the IP address is an address in a subnet
+    // e.g. 198.0.0.1
+    // If its not an IP address in a subetnet is will be:
+    // e.g. 198.0.0.1/24
     if (request.params[0].get_str().find('/') != std::string::npos)
         isSubnet = true;
 
+    // CCDLE12:
+    // TODO:
+    // Look up whether the address is a real IP or subnet address???
     if (!isSubnet) {
         CNetAddr resolved;
         LookupHost(request.params[0].get_str(), resolved, false);
@@ -645,6 +655,9 @@ static RPCHelpMan setban()
     else
         LookupSubNet(request.params[0].get_str(), subNet);
 
+    // CCDLE12:
+    // TODO:
+    // Check whether the address is valid or not
     if (! (isSubnet ? subNet.IsValid() : netAddr.IsValid()) )
         throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Error: Invalid IP/Subnet");
 
@@ -662,6 +675,8 @@ static RPCHelpMan setban()
         if (request.params[3].isTrue())
             absolute = true;
 
+	// CCDLE12:
+	// Set the address to banned and then disconnect that node
         if (isSubnet) {
             node.banman->Ban(subNet, banTime, absolute);
             if (node.connman) {
